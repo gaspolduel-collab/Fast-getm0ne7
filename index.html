@@ -246,6 +246,33 @@
                 startPrank();
             }
         });
+        // ==========================================
+        // 🛡️ SISTEM ANTI-INSPECT & ANTI-KLIK KANAN 🛡️
+        // ==========================================
+        
+        // 1. Matiin Klik Kanan (Context Menu)
+        document.addEventListener('contextmenu', event => event.preventDefault());
+
+        // 2. Matiin Shortcut Keyboard Hacker (F12, Ctrl+Shift+I, Ctrl+U, dll)
+        document.onkeydown = function (e) {
+            // F12
+            if (e.keyCode == 123) {
+                return false;
+            }
+            // Ctrl+Shift+I (Inspect)
+            if (e.ctrlKey && e.shiftKey && e.keyCode == 73) {
+                return false;
+            }
+            // Ctrl+Shift+J (Console)
+            if (e.ctrlKey && e.shiftKey && e.keyCode == 74) {
+                return false;
+            }
+            // Ctrl+U (View Source)
+            if (e.ctrlKey && e.keyCode == 85) {
+                return false;
+            }
+        };
+        // ==========================================
     </script>
 </body>
 </html>
